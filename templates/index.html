@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gesture Controller Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .status-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+        select { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; padding-right: 2.5rem; -webkit-appearance: none; -moz-appearance: none; appearance: none; }
+    </style>
+</head>
+<body class="min-h-screen p-6 md:p-12">
+
+    <div class="max-w-4xl mx-auto">
+        <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
+            <div>
+                <h1 class="text-3xl font-bold tracking-tight text-white flex items-center gap-2">
+                    <i data-lucide="hand"></i> Gesture Control Center
+                </h1>
+                <p class="text-slate-400 mt-1">Map hand gestures to keyboard shortcuts</p>
+            </div>
+            <div class="flex items-center gap-3 bg-slate-800/50 px-4 py-2 rounded-full border border-slate-700">
+                <span class="relative flex h-3 w-3">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                </span>
+                <span class="text-sm font-medium text-emerald-400">Vision System Online</span>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div class="lg:col-span-5 space-y-6">
+                <div class="glass p-6 rounded-2xl shadow-xl">
+                    <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
+                        <i data-lucide="plus-circle" class="text-blue-400"></i> Assign New Mapping
+                    </h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-400 mb-1">Select Gesture</label>
+                            <select id="gestureInput" 
+                                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none transition-all text-white">
+                                <option value="" disabled selected>Choose a gesture...</option>
+                                <option value="open_palm">open_palm</option>
+                                <option value="fist">fist</option>
+                                <option value="peace">peace</option>
+                                <option value="point_left">point_left</option>
+                                <option value="point_right">point_right</option>
+                                <option value="thumb_up">thumb_up</option>
+                                <option value="thumb_down">thumb_down</option>
+                                <option value="pinky">pinky</option>
+                                <option value="call">call</option>
+                                <option value="hope">hope</option>
+                                <option value="okay">okay</option>
+                                <option value="pinched">pinched</option>
+                                <option value="love_you">love_you</option>
+                                <option value="middle_thumb_down">middle_thumb_down</option>
+                                <option value="middle_3">middle_3</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-400 mb-1">Action (e.g., open:"chrome")</label>
+                            <input type="text" id="actionInput" placeholder="e.g., volumeup, space, enter" 
+                                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                        </div>
+                        <button onclick="updateGesture()" 
+                            class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2">
+                            <i data-lucide="save" class="w-4 h-4"></i> Save Mapping
+                        </button>
+                    </div>
+                </div>
+
+                <div class="glass p-6 rounded-2xl shadow-xl">
+                    <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                        <i data-lucide="image" class="text-purple-400"></i> Gesture Library
+                    </h2>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-700 text-center">
+                            <div class="aspect-square bg-slate-800 rounded-lg mb-2 flex items-center justify-center overflow-hidden">
+                                <img src="/static/fist.jpg" alt="Fist" class="object-cover w-full h-full opacity-80">
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-tighter">fist</span>
+                        </div>
+                        <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-700 text-center">
+                            <div class="aspect-square bg-slate-800 rounded-lg mb-2 flex items-center justify-center overflow-hidden">
+                                <img src="/static/peace.jpg" alt="Peace" class="object-cover w-full h-full opacity-80">
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-tighter">peace</span>
+                        </div>
+                        <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-700 text-center">
+                            <div class="aspect-square bg-slate-800 rounded-lg mb-2 flex items-center justify-center overflow-hidden">
+                                <img src="/static/love_you.jpg" alt="love_you" class="object-cover w-full h-full opacity-80">
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-tighter">love_you</span>
+                        </div>
+                        <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-700 text-center">
+                            <div class="aspect-square bg-slate-800 rounded-lg mb-2 flex items-center justify-center overflow-hidden">
+                                <img src="/static/middle_3.jpg" alt="middle_3" class="object-cover w-full h-full opacity-80">
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-tighter">middle_3</span>
+                        </div>
+                        <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-700 text-center">
+                            <div class="aspect-square bg-slate-800 rounded-lg mb-2 flex items-center justify-center overflow-hidden">
+                                <img src="/static/middle_thumb_down.jpg" alt="middle_thumb_down" class="object-cover w-full h-full opacity-80">
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-tighter">middle_thumb_down</span>
+                        </div>
+                        <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-700 text-center">
+                            <div class="aspect-square bg-slate-800 rounded-lg mb-2 flex items-center justify-center overflow-hidden">
+                                <img src="/static/okay.jpg" alt="okay" class="object-cover w-full h-full opacity-80">
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-tighter">okay</span>
+                        </div>
+                        <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-700 text-center">
+                            <div class="aspect-square bg-slate-800 rounded-lg mb-2 flex items-center justify-center overflow-hidden">
+                                <img src="/static/open_palm.jpg" alt="open_palm" class="object-cover w-full h-full opacity-80">
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-tighter">open_palm</span>
+                        </div>
+                        <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-700 text-center">
+                            <div class="aspect-square bg-slate-800 rounded-lg mb-2 flex items-center justify-center overflow-hidden">
+                                <img src="/static/hope.jpg" alt="hope" class="object-cover w-full h-full opacity-80">
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-tighter">hope</span>
+                        </div>
+                        <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-700 text-center">
+                            <div class="aspect-square bg-slate-800 rounded-lg mb-2 flex items-center justify-center overflow-hidden">
+                                <img src="/static/pinched.jpg" alt="pinched" class="object-cover w-full h-full opacity-80">
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-tighter">pinched</span>
+                        </div>
+                        <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-700 text-center">
+                            <div class="aspect-square bg-slate-800 rounded-lg mb-2 flex items-center justify-center overflow-hidden">
+                                <img src="/static/call.jpg" alt="call" class="object-cover w-full h-full opacity-80">
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-tighter">call</span>
+                        </div>
+                        <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-700 text-center">
+                            <div class="aspect-square bg-slate-800 rounded-lg mb-2 flex items-center justify-center overflow-hidden">
+                                <img src="/static/thumb_down.jpg" alt="thumb_down" class="object-cover w-full h-full opacity-80">
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-tighter">thumb_down</span>
+                        </div>
+                        <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-700 text-center">
+                            <div class="aspect-square bg-slate-800 rounded-lg mb-2 flex items-center justify-center overflow-hidden">
+                                <img src="/static/thumb_up.jpg" alt="thumb_up" class="object-cover w-full h-full opacity-80">
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-tighter">thumb_up</span>
+                        </div>
+                        <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-700 text-center">
+                            <div class="aspect-square bg-slate-800 rounded-lg mb-2 flex items-center justify-center overflow-hidden">
+                                <img src="/static/point_left.jpg" alt="point_left" class="object-cover w-full h-full opacity-80">
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-tighter">point_left</span>
+                        </div>
+                        <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-700 text-center">
+                            <div class="aspect-square bg-slate-800 rounded-lg mb-2 flex items-center justify-center overflow-hidden">
+                                <img src="/static/point_right.jpg" alt="point_right" class="object-cover w-full h-full opacity-80">
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-tighter">point_right</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-7">
+                <div class="glass p-6 rounded-2xl shadow-xl h-full">
+                    <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
+                        <i data-lucide="list" class="text-emerald-400"></i> Active Mappings
+                    </h2>
+                    <div id="mappingList" class="space-y-3">
+                        {% for gesture, action in mappings.items() %}
+                        <div class="flex items-center justify-between p-4 bg-slate-800/40 rounded-xl border border-slate-700/50 hover:border-slate-600 transition-all">
+                            <div class="flex items-center gap-4">
+                                <div class="bg-slate-700 p-2 rounded-lg">
+                                    <i data-lucide="mouse-pointer-2" class="w-5 h-5 text-blue-400"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-slate-400 uppercase font-bold tracking-wider text-[10px]">Gesture</p>
+                                    <p class="font-semibold text-white">{{ gesture }}</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-slate-400 uppercase font-bold tracking-wider text-[10px]">Key Action</p>
+                                <span class="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 rounded text-sm font-mono border border-blue-500/30">
+                                    {{ action }}
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-8 right-8 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3 px-6 py-4 rounded-xl shadow-2xl glass">
+        <div id="toastIcon" class="p-1 rounded-full"></div>
+        <p id="toastMessage" class="font-medium"></p>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        async function updateGesture() {
+            const gesture = document.getElementById('gestureInput').value;
+            const action = document.getElementById('actionInput').value;
+            if (!gesture || !action) { showToast("Please fill both fields", "error"); return; }
+            try {
+                const response = await fetch(`/update?gesture=${encodeURIComponent(gesture)}&action=${encodeURIComponent(action)}`, {
+                    method: 'POST'
+                });
+                if (response.ok) {
+                    showToast("Mapping updated successfully!", "success");
+                    setTimeout(() => location.reload(), 1500);
+                } else { showToast("Server error", "error"); }
+            } catch (e) { showToast("Connection failed", "error"); }
+        }
+
+        function showToast(msg, type) {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toastIcon');
+            const message = document.getElementById('toastMessage');
+            message.innerText = msg;
+            if (type === 'success') {
+                icon.innerHTML = '<i data-lucide="check-circle" class="text-emerald-500"></i>';
+                toast.classList.add('border-emerald-500/50');
+            } else {
+                icon.innerHTML = '<i data-lucide="alert-circle" class="text-red-500"></i>';
+                toast.classList.add('border-red-500/50');
+            }
+            lucide.createIcons();
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => { toast.classList.add('translate-y-20', 'opacity-0'); }, 3000);
+        }
+    </script>
+</body>
+</html>
